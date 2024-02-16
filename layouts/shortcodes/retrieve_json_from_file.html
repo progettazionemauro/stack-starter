@@ -6,18 +6,23 @@
     <title>Table from JSON</title>
     <!-- Include Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        /* Custom gradient background for the table */
-        .custom-table {
-            background: linear-gradient(to right, #c4b3af, #feb47b);
-            color: black; /* Text color */
-        }
-    </style>
 </head>
 <body>
     {{ $jsonData := getJSON "data/json_file/RandomData.json" }}
     <div class="table-responsive">
-        <table class="table table-hover custom-table"> <!-- Added .custom-table -->
+        <!-- Search inputs -->
+        <div class="row mb-3">
+            <div class="col">
+                <input type="text" id="searchID" class="form-control" placeholder="Search ID...">
+            </div>
+            <div class="col">
+                <input type="text" id="searchBio" class="form-control" placeholder="Search Bio...">
+            </div>
+            <div class="col">
+                <input type="text" id="searchVersion" class="form-control" placeholder="Search Version...">
+            </div>
+        </div>
+        <table id="myTable" class="table table-hover custom-table"> <!-- Added ID for JavaScript interaction -->
             <thead>
                 <tr>
                     <th>ID</th>
@@ -38,5 +43,41 @@
     </div>
     <!-- Include Bootstrap JS (optional) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var table = document.getElementById('myTable');
+            var searchID = document.getElementById('searchID');
+            var searchBio = document.getElementById('searchBio');
+            var searchVersion = document.getElementById('searchVersion');
+            
+            searchID.addEventListener('input', function () {
+                searchTable(0, searchID.value.toLowerCase());
+            });
+            
+            searchBio.addEventListener('input', function () {
+                searchTable(1, searchBio.value.toLowerCase());
+            });
+            
+            searchVersion.addEventListener('input', function () {
+                searchTable(2, searchVersion.value.toLowerCase());
+            });
+            
+            function searchTable(columnIndex, filter) {
+                var rows = table.getElementsByTagName('tr');
+                for (var i = 0; i < rows.length; i++) {
+                    var row = rows[i];
+                    var cells = row.getElementsByTagName('td');
+                    if (cells.length > columnIndex) {
+                        var cell = cells[columnIndex];
+                        if (cell.innerText.toLowerCase().indexOf(filter) > -1) {
+                            row.style.display = '';
+                        } else {
+                            row.style.display = 'none';
+                        }
+                    }
+                }
+            }
+        });
+    </script>
 </body>
 </html>
